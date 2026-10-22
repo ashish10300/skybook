@@ -30,34 +30,24 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
 </head>
 <body>
 
-    <!-- SkyBook Aviation Preloader (Image Loading Animation) -->
+    <!-- SkyBook Minimalist Preloader -->
     <div id="skybook-preloader" class="skybook-preloader" aria-hidden="true">
-        <div class="preloader-content">
-            <!-- Pulsing Aviation Radar & Airplane -->
-            <div class="preloader-radar">
-                <div class="radar-wave"></div>
-                <div class="radar-wave delay-1"></div>
-                <div class="radar-wave delay-2"></div>
-                <div class="radar-plane-box">
-                    <svg class="radar-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
+        <div class="preloader-minimal">
+            <div class="minimal-flight-orbit">
+                <svg class="orbit-svg" viewBox="0 0 72 72">
+                    <circle class="orbit-track" cx="36" cy="36" r="30" />
+                    <circle class="orbit-spinner" cx="36" cy="36" r="30" />
+                </svg>
+                <div class="orbit-plane-center">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
                     </svg>
                 </div>
             </div>
-
-            <!-- Brand Logo -->
-            <div class="preloader-brand">
-                <span class="brand-text">Sky<span style="color:var(--accent);">Book</span></span>
+            <div class="preloader-wordmark">
+                Sky<span>Book</span>
             </div>
-
-            <!-- Aviation Status Text -->
-            <div class="preloader-status" id="preloader-status-text">Preparing Flight Corridors...</div>
-
-            <!-- Progress Track & Percentage -->
-            <div class="preloader-progress-track">
-                <div class="preloader-progress-bar" id="preloader-progress-bar"></div>
-            </div>
-            <div class="preloader-percentage" id="preloader-percentage">0%</div>
+            <div class="minimal-pulse-line"></div>
         </div>
     </div>
 

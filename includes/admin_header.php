@@ -33,7 +33,7 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
             <div style="display:flex; align-items:center; gap:10px;">
                 <img src="<?= base_url('assets/img/logo.png') ?>" alt="SkyBook Logo" style="height: 32px; width: auto; object-fit: contain;">
                 <div>
-                    <span style="font-family: var(--font-heading); font-weight:800; font-size:1.15rem; color:#fff;">ky<span style="color:var(--accent);">Book</span></span>
+                    <span style="font-family: var(--font-heading); font-weight:800; font-size:1.15rem; color:#fff;">Sky<span style="color:var(--accent);">Book</span></span>
                     <span class="admin-badge">Admin</span>
                 </div>
             </div>

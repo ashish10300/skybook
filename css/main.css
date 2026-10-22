@@ -1991,156 +1991,152 @@ h4 { font-size: 1.1rem; }
 }
 
 /* ==============================================================
-   AVIATION IMAGE PRELOADER & SKELETON SHIMMER
+   MINIMALIST AVIATION PRELOADER & SKELETON SHIMMER
    ============================================================== */
 
 .skybook-preloader {
   position: fixed;
   inset: 0;
-  background: #070a12;
-  z-index: 999999;
+  background: rgba(7, 10, 18, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 9999999;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+}
+
+/* Activated ONLY if page contains images that are currently loading over network */
+.skybook-preloader.is-active {
+  opacity: 1;
+  visibility: visible;
   pointer-events: all;
 }
 
 .skybook-preloader.preloader-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
-.preloader-content {
+.preloader-minimal {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 2rem;
-  max-width: 360px;
-  width: 90%;
+  justify-content: center;
+  gap: 16px;
+  user-select: none;
 }
 
-/* Concentric Radar Waves */
-.preloader-radar {
-  width: 100px;
-  height: 100px;
+/* Minimal Flight Orbit Spinner */
+.minimal-flight-orbit {
   position: relative;
+  width: 68px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
 }
 
-.radar-wave {
-  position: absolute;
+.orbit-svg {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  border: 1.5px solid rgba(56, 189, 248, 0.4);
-  animation: radarPulse 2.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+  transform: rotate(-90deg);
 }
 
-.radar-wave.delay-1 {
-  animation-delay: 0.6s;
+.orbit-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 2.5;
 }
 
-.radar-wave.delay-2 {
-  animation-delay: 1.2s;
+.orbit-spinner {
+  fill: none;
+  stroke: #38bdf8;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 48 140;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  animation: orbitRotate 1.15s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8));
 }
 
-@keyframes radarPulse {
+@keyframes orbitRotate {
   0% {
-    transform: scale(0.3);
-    opacity: 0.9;
+    transform: rotate(0deg);
   }
   100% {
-    transform: scale(1.4);
-    opacity: 0;
+    transform: rotate(360deg);
   }
 }
 
-.radar-plane-box {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.3), rgba(15, 23, 42, 0.9));
-  border: 1px solid rgba(56, 189, 248, 0.5);
+/* Centered Airplane Core */
+.orbit-plane-center {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
-  animation: planeFloat 2.5s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.radar-plane {
-  width: 26px;
-  height: 26px;
-  color: #38bdf8;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+.orbit-plane-center svg {
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.7));
+  animation: planeHover 2s ease-in-out infinite;
 }
 
-@keyframes planeFloat {
+@keyframes planeHover {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-2px) scale(1.06);
   }
 }
 
-.preloader-brand {
-  margin-bottom: 0.75rem;
-}
-
-.preloader-brand .brand-text {
-  font-family: var(--font-heading);
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-}
-
-.preloader-status {
-  font-size: 0.85rem;
-  color: #94a3b8;
-  font-weight: 500;
-  margin-bottom: 1.25rem;
-  min-height: 20px;
-  letter-spacing: 0.02em;
-  transition: opacity 0.2s ease;
-}
-
-/* Progress Track */
-.preloader-progress-track {
-  width: 220px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.preloader-progress-bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
-  border-radius: 999px;
-  transition: width 0.2s ease-out;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
-}
-
-.preloader-percentage {
-  font-size: 0.75rem;
-  color: #38bdf8;
-  font-family: monospace;
+/* Minimal Wordmark */
+.preloader-wordmark {
+  font-family: var(--font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 1.1rem;
   font-weight: 700;
-  margin-top: 8px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffffff;
+  opacity: 0.95;
+}
+
+.preloader-wordmark span {
+  color: #38bdf8;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+/* Luminous Minimal Pulse Line */
+.minimal-pulse-line {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+  animation: pulseBreadth 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseBreadth {
+  0%, 100% {
+    width: 24px;
+    opacity: 0.35;
+  }
+  50% {
+    width: 48px;
+    opacity: 1;
+  }
 }
 
 /* Card-Level Image Shimmer Skeleton */
@@ -2178,11 +2174,11 @@ h4 { font-size: 1.1rem; }
 .cabin-img-wrap img,
 .about-image-card img {
   opacity: 0;
-  transition: opacity 0.5s ease, transform 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .dest-img.img-loaded,
 .cabin-img-wrap img.img-loaded,
 .about-image-card img.img-loaded {
-  opacity: 1;
+  opacity: 1 !important;
 }

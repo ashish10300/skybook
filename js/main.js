@@ -1,3 +1,4 @@
+
 /**
  * SkyBook - Main Global JavaScript
  */
@@ -64,100 +65,106 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==============================================================
-// SkyBook Aviation Preloader & Image Loading Tracker
+// SkyBook Minimalist Preloader & Intelligent Image Cache Detector
 // ==============================================================
-(function initSkyBookPreloader() {
+(function initSkyBookMinimalPreloader() {
     const preloader = document.getElementById('skybook-preloader');
     if (!preloader) return;
 
-    const progressBar = document.getElementById('preloader-progress-bar');
-    const progressPercent = document.getElementById('preloader-percentage');
-    const statusText = document.getElementById('preloader-status-text');
-
-    let isFinished = false;
-    let currentPercent = 0;
-
-    function setVisualProgress(percent) {
-        currentPercent = Math.max(currentPercent, Math.min(Math.round(percent), 100));
-        if (progressBar) progressBar.style.width = currentPercent + '%';
-        if (progressPercent) progressPercent.textContent = currentPercent + '%';
-
-        if (statusText) {
-            if (currentPercent < 35) {
-                statusText.textContent = 'Calibrating Global Corridors...';
-            } else if (currentPercent < 75) {
-                statusText.textContent = 'Loading High-Resolution Fleet Imagery...';
-            } else if (currentPercent < 100) {
-                statusText.textContent = 'Finalizing Avionics & Seat Allocator...';
-            } else {
-                statusText.textContent = 'Ready for Departure!';
-            }
-        }
-    }
-
+    // Immediately mark loaded images so they don't remain hidden by initial CSS
     function markImageLoaded(img) {
         img.classList.add('img-loaded');
     }
 
-    function checkAllImages() {
-        const images = Array.from(document.querySelectorAll('img:not(.radar-plane)'));
-        const totalImages = images.length;
+    // Collect all image items to monitor (both <img> tags and background-images)
+    function collectPendingMedia() {
+        const pending = [];
+        const contentImages = Array.from(document.querySelectorAll('img')).filter(img => !preloader.contains(img));
 
-        if (totalImages === 0) {
-            setVisualProgress(100);
-            dismissPreloader();
-            return;
-        }
-
-        let loadedCount = 0;
-
-        function onImageHandled(img) {
-            markImageLoaded(img);
-            loadedCount++;
-            setVisualProgress((loadedCount / totalImages) * 100);
-            if (loadedCount >= totalImages) {
-                dismissPreloader();
-            }
-        }
-
-        images.forEach(img => {
-            if (img.complete && img.naturalHeight !== 0) {
-                onImageHandled(img);
+        contentImages.forEach(img => {
+            if (img.complete && img.naturalHeight > 0) {
+                markImageLoaded(img);
             } else {
-                img.addEventListener('load', () => onImageHandled(img), { once: true });
-                img.addEventListener('error', () => onImageHandled(img), { once: true });
+                pending.push({
+                    subscribe: (onDone) => {
+                        img.addEventListener('load', () => { markImageLoaded(img); onDone(); }, { once: true });
+                        img.addEventListener('error', () => { markImageLoaded(img); onDone(); }, { once: true });
+                    }
+                });
             }
         });
 
-        if (loadedCount > 0) {
-            setVisualProgress((loadedCount / totalImages) * 100);
+        // Also check key background images
+        const bgElements = Array.from(document.querySelectorAll('[style*="background-image"], .hero-section, .cta-banner'));
+        bgElements.forEach(el => {
+            const style = window.getComputedStyle(el);
+            const bg = style.backgroundImage;
+            if (bg && bg !== 'none') {
+                const match = bg.match(/url\(['"]?([^'"]+)['"]?\)/);
+                if (match && match[1] && !match[1].startsWith('data:')) {
+                    const testImg = new Image();
+                    testImg.src = match[1];
+                    if (!(testImg.complete && testImg.naturalHeight > 0)) {
+                        pending.push({
+                            subscribe: (onDone) => {
+                                testImg.onload = onDone;
+                                testImg.onerror = onDone;
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        return pending;
+    }
+
+    const pendingItems = collectPendingMedia();
+
+    // 1. IF ALREADY LOADED / CACHED -> DO NOT SHOW ANIMATION AT ALL
+    if (pendingItems.length === 0) {
+        preloader.style.display = 'none';
+        if (preloader.parentNode) {
+            preloader.parentNode.removeChild(preloader);
         }
+        return;
     }
 
-    function dismissPreloader() {
-        if (isFinished) return;
-        isFinished = true;
-        setVisualProgress(100);
+    // 2. IF NOT LOADED -> SHOW MINIMALIST ANIMATION UNTIL IMAGES COMPLETE
+    preloader.classList.add('is-active');
 
+    let remaining = pendingItems.length;
+    let isDismissed = false;
+
+    function fadeOutPreloader() {
+        if (isDismissed) return;
+        isDismissed = true;
+
+        preloader.classList.remove('is-active');
+        preloader.classList.add('preloader-hidden');
         setTimeout(() => {
-            preloader.classList.add('preloader-hidden');
-            setTimeout(() => {
-                if (preloader.parentNode) preloader.remove();
-            }, 600);
-        }, 300);
+            if (preloader.parentNode) {
+                preloader.parentNode.removeChild(preloader);
+            }
+        }, 400);
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', checkAllImages);
-    } else {
-        checkAllImages();
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(dismissPreloader, 200);
+    pendingItems.forEach(item => {
+        item.subscribe(() => {
+            remaining--;
+            if (remaining <= 0) {
+                fadeOutPreloader();
+            }
+        });
     });
 
-    // Safety fallback: Never trap user on slow 2G/offline
-    setTimeout(dismissPreloader, 2500);
+    // Window load backup event
+    window.addEventListener('load', () => {
+        setTimeout(fadeOutPreloader, 100);
+    }, { once: true });
+
+    // Safety fallback: Never trap users if CDN/network hangs
+    setTimeout(fadeOutPreloader, 2200);
 })();
+
 
