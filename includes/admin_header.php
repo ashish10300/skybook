@@ -22,11 +22,27 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     <link rel="stylesheet" href="<?= asset_url('css/main.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/main.css') ?>">
     <link rel="stylesheet" href="<?= asset_url('css/admin.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/admin.css') ?>">
 <body>
-    <!-- SkyBook Simple Loading Animation -->
+    <!-- SkyBook Minimalist Preloader -->
     <div id="skybook-preloader" class="skybook-preloader" aria-hidden="true">
-        <div class="preloader-simple">
-            <div class="simple-spinner"></div>
-            <div class="simple-loading-text">Loading...</div>
+        <div class="preloader-minimal">
+            <div class="minimal-flight-orbit">
+                <svg class="orbit-svg" viewBox="0 0 72 72">
+                    <circle class="orbit-track" cx="36" cy="36" r="30" />
+                    <circle class="orbit-spinner" cx="36" cy="36" r="30" />
+                </svg>
+                <div class="orbit-plane-center">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="preloader-wordmark">
+                Sky<span>Book</span>
+            </div>
+            <div class="preloader-status" id="preloader-status-msg" style="font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.05em; text-transform: uppercase;">
+                Preparing Flight Experience...
+            </div>
+            <div class="minimal-pulse-line"></div>
         </div>
     </div>
     <script>
