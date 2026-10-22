@@ -19,8 +19,8 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | SkyBook Admin' : 'SkyBook Control Center' ?></title>
     
     <!-- Base Styles & Admin Theme -->
-    <link rel="stylesheet" href="<?= asset_url('css/main.css') ?>">
-    <link rel="stylesheet" href="<?= asset_url('css/admin.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('css/main.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/main.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('css/admin.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/admin.css') ?>">
 </head>
 <body>
 <div class="admin-layout">
@@ -121,7 +121,7 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
                 <div class="admin-topbar-title-wrap">
                     <span class="admin-topbar-brand-mobile">
                         <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo" style="height:22px; width:auto;">
-                        <span>ky<span style="color:var(--accent);">Book</span></span>
+                        <span>Sky<span style="color:var(--accent);">Book</span></span>
                         <span class="admin-badge">Admin</span>
                     </span>
                     <span class="admin-topbar-title">SkyBook Admin Console</span>
