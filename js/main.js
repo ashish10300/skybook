@@ -66,11 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ==============================================================
 // ==============================================================
-// SkyBook Intelligent Conditional Preloader & Image Load System
+// SkyBook Intelligent Loading Experience Engine
+// (Renders first, displays for min 1.5s, holds until all images load)
 // ==============================================================
 (function initSkyBookLoadExperience() {
     const preloader = document.getElementById('skybook-preloader');
     const statusMsg = document.getElementById('preloader-status-msg');
+    const startTime = window.__skybookStartTime || Date.now();
+    const MIN_LOADER_MS = 1500; // 1.5 seconds minimum display duration
     let isDismissed = false;
 
     // 1. Mark image and parent wrappers
@@ -107,49 +110,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Conditional Page Preloader Dismissal / Activation
+    // 3. Smooth Dismissal
     function fadeOutPreloader() {
         if (isDismissed || !preloader) return;
         isDismissed = true;
         window.__skybookLoaded = true;
 
-        if (window.__skybookTimer) {
-            clearTimeout(window.__skybookTimer);
-        }
-
-        preloader.classList.remove('is-active');
         preloader.classList.add('preloader-hidden');
 
         setTimeout(() => {
             preloader.style.display = 'none';
-        }, 360);
+        }, 400);
     }
 
-    // Check if images and document have finished loading
+    // 4. Verification Check: Both 1.5s minimum elapsed AND all images + document ready
     function checkAllReady() {
+        if (isDismissed) return;
+
         const allImagesDone = pendingImages.every(img => img.complete);
-        const isDocDone = document.readyState === 'complete';
+        const isDocDone = (document.readyState === 'complete');
+
         if (allImagesDone && isDocDone) {
-            fadeOutPreloader();
+            const elapsed = Date.now() - startTime;
+            if (elapsed >= MIN_LOADER_MS) {
+                // Both conditions met: 1.5s has passed AND all images/assets are loaded
+                fadeOutPreloader();
+            } else {
+                // All loaded fast (< 1.5s): wait the remaining time to complete 1.5s
+                const remaining = MIN_LOADER_MS - elapsed;
+                setTimeout(fadeOutPreloader, remaining);
+            }
         }
     }
 
-    if (pendingImages.length === 0) {
-        if (document.readyState === 'complete') {
-            fadeOutPreloader();
-        } else {
-            window.addEventListener('load', fadeOutPreloader, { once: true });
-        }
+    if (pendingImages.length === 0 && document.readyState === 'complete') {
+        checkAllReady();
     } else {
         pendingImages.forEach(img => {
             img.addEventListener('load', checkAllReady, { once: true });
             img.addEventListener('error', checkAllReady, { once: true });
         });
         window.addEventListener('load', checkAllReady, { once: true });
-        setTimeout(fadeOutPreloader, 3500);
+
+        // Backup failsafe timer (7.5s) in case an external resource stalls indefinitely
+        setTimeout(fadeOutPreloader, 7500);
     }
 
-    // 4. Global helper to trigger loader during navigation / form submissions
+    // 5. Global helper to trigger loader during navigation / form submissions
     window.showSkyBookLoader = function(message) {
         if (!preloader) return;
         if (statusMsg && message) {
@@ -157,10 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         preloader.style.display = 'flex';
         preloader.classList.remove('preloader-hidden');
-        preloader.classList.add('is-active');
+        preloader.style.opacity = '1';
+        preloader.style.visibility = 'visible';
     };
 
-    // 5. Intercept Search & Booking Form submissions to show active flight search loader
+    // 6. Intercept Search & Booking Form submissions to show active flight search loader
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function(e) {
             if (form.checkValidity && !form.checkValidity()) {

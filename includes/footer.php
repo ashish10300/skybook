@@ -74,7 +74,7 @@
     </footer>
 
     <!-- Global JavaScript -->
-    <script src="<?= asset_url('js/main.js') ?>"></script>
+    <script src="<?= asset_url('js/main.js') ?>?v=<?= filemtime(dirname(__DIR__) . '/js/main.js') ?>"></script>
     <?php if (!empty($extraJs)): ?>
         <?php foreach ($extraJs as $jsFile): ?>
             <script src="<?= asset_url('js/' . $jsFile) ?>"></script>

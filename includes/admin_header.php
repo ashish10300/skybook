@@ -22,8 +22,8 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     <link rel="stylesheet" href="<?= asset_url('css/main.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/main.css') ?>">
     <link rel="stylesheet" href="<?= asset_url('css/admin.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/admin.css') ?>">
 <body>
-    <!-- SkyBook Minimalist Preloader -->
-    <div id="skybook-preloader" class="skybook-preloader" aria-hidden="true">
+    <!-- SkyBook Minimalist Preloader (Renders First Immediately) -->
+    <div id="skybook-preloader" class="skybook-preloader" style="opacity:1; visibility:visible; display:flex;" aria-hidden="true">
         <div class="preloader-minimal">
             <div class="minimal-flight-orbit">
                 <svg class="orbit-svg" viewBox="0 0 72 72">
@@ -40,19 +40,13 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
                 Sky<span>Book</span>
             </div>
             <div class="preloader-status" id="preloader-status-msg" style="font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.05em; text-transform: uppercase;">
-                Preparing Flight Experience...
+                Loading...
             </div>
             <div class="minimal-pulse-line"></div>
         </div>
     </div>
     <script>
     window.__skybookStartTime = Date.now();
-    window.__skybookTimer = setTimeout(function() {
-        var pl = document.getElementById('skybook-preloader');
-        if (pl && !window.__skybookLoaded) {
-            pl.classList.add('is-active');
-        }
-    }, 1000);
     </script>
 
 <div class="admin-layout">
