@@ -20,3 +20,5 @@ desktop.ini
 # Logs and databases
 *.log
 *.sqlite
+
+*.zip

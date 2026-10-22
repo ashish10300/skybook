@@ -62,20 +62,20 @@ $bookings = $stmt->fetchAll();
             <?php foreach ($bookings as $b): 
                 $airlineMeta = get_airline_meta($b['airline']);
             ?>
-                <div class="form-card" style="padding: 1.75rem; margin-bottom: 0;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; flex-wrap:wrap; gap:12px;">
-                        <div>
+                <div class="booking-card form-card">
+                    <div class="booking-card-header">
+                        <div class="booking-ref-block">
                             <span class="status-pill status-booked" style="margin-bottom:4px;">Confirmed &bull; Paid</span>
-                            <div style="font-family:monospace; font-size:1.35rem; font-weight:800; color:var(--accent);">
+                            <div class="booking-ref-number">
                                 <?= htmlspecialchars($b['booking_reference']) ?>
                             </div>
                         </div>
 
-                        <div style="text-align:right;">
-                            <div style="font-size:1.35rem; font-weight:800; color:#fff;">
+                        <div class="booking-price-block">
+                            <div class="booking-total-amount">
                                 <?= format_currency($b['total_amount']) ?>
                             </div>
-                            <span style="font-size:0.8rem; color:var(--text-dim);">
+                            <span class="booking-paid-date">
                                 Paid: <?= format_date($b['paid_at'] ?? $b['created_at'], 'd M Y, H:i') ?>
                             </span>
                         </div>
@@ -110,16 +110,17 @@ $bookings = $stmt->fetchAll();
                     </div>
 
                     <!-- Action Link -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:14px; flex-wrap:wrap; gap:12px;">
-                        <div style="font-size:0.85rem; color:var(--text-dim);">
-                            Payment Method: <?= htmlspecialchars($b['payment_method'] ?? 'Demo Card') ?>
+                    <div class="booking-card-footer">
+                        <div class="booking-payment-method">
+                            <span style="opacity:0.8;">💳</span>
+                            <span>Payment Method: <strong><?= htmlspecialchars($b['payment_method'] ?? 'Demo Card') ?></strong></span>
                         </div>
 
-                        <div style="display:flex; gap:10px;">
-                            <a href="<?= base_url('pages/review.php?booking_ref=' . urlencode($b['booking_reference'])) ?>" class="btn btn-secondary btn-sm">
+                        <div class="booking-card-actions">
+                            <a href="<?= base_url('pages/review.php?booking_ref=' . urlencode($b['booking_reference'])) ?>" class="btn btn-secondary btn-sm booking-action-btn">
                                 View Summary
                             </a>
-                            <a href="<?= base_url('pages/ticket.php?booking_ref=' . urlencode($b['booking_reference'])) ?>" class="btn btn-primary btn-sm">
+                            <a href="<?= base_url('pages/ticket.php?booking_ref=' . urlencode($b['booking_reference'])) ?>" class="btn btn-primary btn-sm booking-action-btn booking-ticket-btn">
                                 🎟️ Boarding Pass / E-Ticket &rarr;
                             </a>
                         </div>

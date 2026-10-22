@@ -2182,3 +2182,205 @@ h4 { font-size: 1.1rem; }
 .about-image-card img.img-loaded {
   opacity: 1 !important;
 }
+
+/* ==============================================================
+   Admin Credentials Card (Login Screen)
+   ============================================================== */
+.admin-creds-card {
+  transition: var(--transition);
+}
+.admin-creds-card:hover {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+}
+.admin-creds-card code {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+.copy-icon-btn {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.copy-icon-btn:hover {
+  transform: scale(1.15);
+  color: #ffffff !important;
+}
+
+/* ==============================================================
+   Booking Card Components & Responsive Action Buttons
+   ============================================================== */
+.booking-card {
+  padding: 1.75rem;
+  margin-bottom: 0;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  transition: var(--transition);
+}
+
+.booking-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45);
+}
+
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.booking-ref-number {
+  font-family: monospace;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.booking-price-block {
+  text-align: right;
+}
+
+.booking-total-amount {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.booking-paid-date {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.booking-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.booking-payment-method {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.booking-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.booking-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.booking-ticket-btn {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+}
+
+.booking-ticket-btn:hover {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9) !important;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+  transform: translateY(-1px);
+}
+
+.booking-confirm-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.booking-confirm-actions .booking-action-btn {
+  flex: 1 1 240px;
+  text-align: center;
+  justify-content: center;
+}
+
+/* Mobile & Tablet Responsive Media Query for Booking Action Buttons */
+@media (max-width: 640px) {
+  .booking-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  .booking-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .booking-price-block {
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  }
+
+  .booking-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .booking-card-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .booking-card-actions .booking-action-btn,
+  .booking-card-actions .btn {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.92rem !important;
+    box-sizing: border-box;
+    display: flex;
+  }
+
+  .booking-ticket-btn {
+    order: -1; /* Elevated primary priority on mobile */
+    font-size: 0.95rem !important;
+    padding: 0.85rem 1rem !important;
+    box-shadow: 0 6px 18px rgba(14, 165, 233, 0.45);
+  }
+
+  .booking-confirm-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .booking-confirm-actions .booking-action-btn {
+    width: 100% !important;
+    flex: none;
+    padding: 0.85rem 1rem !important;
+    font-size: 0.95rem !important;
+  }
+}
+

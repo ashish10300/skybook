@@ -141,22 +141,22 @@ require_once dirname(__DIR__) . '/includes/header.php';
                     <?php endif; ?>
 
                     <!-- Action Controls -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:14px; flex-wrap:wrap; gap:12px;">
+                    <div class="booking-card-footer">
                         <div>
                             <form action="" method="POST" onsubmit="return confirm('Are you sure you want to delete this draft reservation?');" style="display:inline;">
                                 <input type="hidden" name="action" value="delete_draft">
                                 <input type="hidden" name="booking_reference" value="<?= htmlspecialchars($draft['booking_reference']) ?>">
-                                <button type="submit" class="btn btn-danger btn-sm">
+                                <button type="submit" class="btn btn-danger btn-sm booking-action-btn">
                                     🗑️ Delete Draft
                                 </button>
                             </form>
                         </div>
 
-                        <div style="display:flex; gap:10px;">
-                            <a href="<?= base_url('pages/passenger.php?draft_ref=' . urlencode($draft['booking_reference'])) ?>" class="btn btn-secondary btn-sm">
+                        <div class="booking-card-actions">
+                            <a href="<?= base_url('pages/passenger.php?draft_ref=' . urlencode($draft['booking_reference'])) ?>" class="btn btn-secondary btn-sm booking-action-btn">
                                 Edit Passengers
                             </a>
-                            <a href="<?= base_url('pages/review.php?booking_ref=' . urlencode($draft['booking_reference'])) ?>" class="btn btn-primary btn-sm">
+                            <a href="<?= base_url('pages/review.php?booking_ref=' . urlencode($draft['booking_reference'])) ?>" class="btn btn-primary btn-sm booking-action-btn booking-ticket-btn">
                                 Continue Booking &rarr;
                             </a>
                         </div>

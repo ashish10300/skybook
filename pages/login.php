@@ -102,11 +102,29 @@ require_once dirname(__DIR__) . '/includes/header.php';
         <?php endif; ?>
 
         <!-- Admin Credentials Info -->
-        <div style="background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: var(--radius-md); padding: 12px; margin-bottom: 1.5rem; font-size: 0.8rem;">
-            <strong style="color: var(--accent); display:block; margin-bottom:4px;">Admin Credentials:</strong>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="display:flex; align-items:center; gap:6px;">Email: <code>admin@skybook.com</code> <button type="button" onclick="copyCreds('admin@skybook.com', this)" style="background:none;border:none;cursor:pointer;color:var(--accent);padding:0;display:flex;align-items:center;" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></span>
-                <span style="display:flex; align-items:center; gap:6px;">Pass: <code>Admin@123</code> <button type="button" onclick="copyCreds('Admin@123', this)" style="background:none;border:none;cursor:pointer;color:var(--accent);padding:0;display:flex;align-items:center;" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button></span>
+        <div class="admin-creds-card" style="background: rgba(56, 189, 248, 0.08); border: 1px dashed rgba(56, 189, 248, 0.35); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 1.5rem; font-size: 0.82rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px;">
+                <strong style="color: var(--accent); display:flex; align-items:center; gap:6px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Demo Admin Credentials
+                </strong>
+                <button type="button" onclick="autoFillAdminCreds(this)" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 6px; color: var(--accent); padding: 3px 9px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: var(--transition); display:flex; align-items:center; gap:4px;" title="Autofill email and password">
+                    ⚡ Auto-Fill All
+                </button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" onclick="copyCreds('admin@skybook.com', this.querySelector('.copy-icon-btn'), 'login-email')" title="Click to copy & fill email">
+                    <span style="color:var(--text-dim);">Email:</span> <code>admin@skybook.com</code> 
+                    <button type="button" class="copy-icon-btn" style="background:none;border:none;cursor:pointer;color:var(--accent);padding:2px;display:inline-flex;align-items:center;" title="Copy & Fill Email">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" onclick="copyCreds('Admin@123', this.querySelector('.copy-icon-btn'), 'login-password')" title="Click to copy & fill password">
+                    <span style="color:var(--text-dim);">Pass:</span> <code>Admin@123</code> 
+                    <button type="button" class="copy-icon-btn" style="background:none;border:none;cursor:pointer;color:var(--accent);padding:2px;display:inline-flex;align-items:center;" title="Copy & Fill Password">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -141,16 +159,101 @@ require_once dirname(__DIR__) . '/includes/header.php';
 </div>
 
 <script>
-function copyCreds(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    } else {
+        return new Promise(function(resolve, reject) {
+            try {
+                var textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.top = "-9999px";
+                textArea.style.left = "-9999px";
+                textArea.style.opacity = "0";
+                textArea.setAttribute("readonly", "");
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                textArea.setSelectionRange(0, 99999);
+                var successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                if (successful) {
+                    resolve();
+                } else {
+                    reject(new Error('execCommand returned false'));
+                }
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+}
+
+function copyCreds(text, btn, targetInputId) {
+    function triggerFeedback() {
+        if (!btn) return;
+        var originalHtml = btn.dataset.origHtml || btn.innerHTML;
+        btn.dataset.origHtml = originalHtml;
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
         btn.style.color = 'var(--success)';
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.color = 'var(--accent)';
-        }, 1500);
+        btn.title = 'Copied!';
+        setTimeout(function() {
+            btn.innerHTML = originalHtml;
+            btn.style.color = '';
+            btn.title = 'Copy';
+        }, 1600);
+    }
+
+    copyToClipboard(text).then(function() {
+        triggerFeedback();
+    }).catch(function() {
+        triggerFeedback();
     });
+
+    if (targetInputId) {
+        var input = document.getElementById(targetInputId);
+        if (input) {
+            input.value = text;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus();
+            input.style.borderColor = 'var(--accent)';
+            input.style.boxShadow = '0 0 0 3px rgba(56, 189, 248, 0.3)';
+            setTimeout(function() {
+                input.style.borderColor = '';
+                input.style.boxShadow = '';
+            }, 1000);
+        }
+    }
+}
+
+function autoFillAdminCreds(btn) {
+    var emailInput = document.getElementById('login-email');
+    var passInput = document.getElementById('login-password');
+    if (emailInput) {
+        emailInput.value = 'admin@skybook.com';
+        emailInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (passInput) {
+        passInput.value = 'Admin@123';
+        passInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    copyToClipboard('admin@skybook.com').catch(function() {});
+
+    if (btn) {
+        var origHtml = btn.innerHTML;
+        btn.innerHTML = '✓ Filled!';
+        btn.style.background = 'rgba(16, 185, 129, 0.2)';
+        btn.style.borderColor = 'var(--success)';
+        btn.style.color = 'var(--success)';
+        setTimeout(function() {
+            btn.innerHTML = origHtml;
+            btn.style.background = '';
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }, 1800);
+    }
 }
 </script>
 

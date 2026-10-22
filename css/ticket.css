@@ -668,6 +668,19 @@
   }
 }
 
+/* Compact Mobile Screens (<= 480px) */
+@media (max-width: 480px) {
+  .ticket-actions-btns {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ticket-actions-btns .btn {
+    width: 100% !important;
+    padding: 0.7rem 1rem !important;
+    font-size: 0.88rem !important;
+  }
+}
+
 /* Extra-Small Mobile Screens (<= 400px - e.g. iPhone SE, compact phones) */
 @media (max-width: 400px) {
   .ticket-wrapper {

@@ -143,11 +143,11 @@ require_once dirname(__DIR__) . '/includes/header.php';
             </div>
 
             <!-- Action Buttons -->
-            <div style="display:flex; gap:14px; flex-wrap:wrap;">
-                <a href="<?= base_url('pages/ticket.php?booking_ref=' . urlencode($booking['booking_reference'])) ?>" class="btn btn-primary btn-lg" style="flex:1;">
+            <div class="booking-confirm-actions">
+                <a href="<?= base_url('pages/ticket.php?booking_ref=' . urlencode($booking['booking_reference'])) ?>" class="btn btn-primary btn-lg booking-action-btn booking-ticket-btn">
                     🎟️ View Virtual Boarding Pass / E-Ticket &rarr;
                 </a>
-                <a href="<?= base_url('pages/my-bookings.php') ?>" class="btn btn-secondary btn-lg">
+                <a href="<?= base_url('pages/my-bookings.php') ?>" class="btn btn-secondary btn-lg booking-action-btn">
                     Go to My Bookings
                 </a>
             </div>
