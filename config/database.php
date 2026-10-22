@@ -9,6 +9,7 @@ if (!defined('DB_PORT')) define('DB_PORT', getenv('DB_PORT') ?: '3306');
 if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'skybook_db');
 if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'root');
 if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+if (!defined('DB_SSL'))  define('DB_SSL',  getenv('DB_SSL') === 'true' || getenv('DB_SSL') === '1');
 
 /**
  * Obtain a shared PDO database instance.
@@ -27,8 +28,30 @@ function get_db() {
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
 
+        // Cloud MySQL SSL Support (e.g. TiDB Cloud, Aiven, PlanetScale)
+        if (DB_SSL && defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+            $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+        }
+
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+
+            // Cloud DB helper: Check if tables exist in the connected database; if not, auto-seed
+            try {
+                $check = $pdo->query("SHOW TABLES LIKE 'users'")->fetch();
+                if (!$check) {
+                    $sqlFile = dirname(__DIR__) . '/database/skybook_db.sql';
+                    if (file_exists($sqlFile)) {
+                        $sql = file_get_contents($sqlFile);
+                        $sql = preg_replace('/CREATE DATABASE[^;]+;/i', '', $sql);
+                        $sql = preg_replace('/USE `?[a-zA-Z0-9_]+`?;/i', '', $sql);
+                        $pdo->exec($sql);
+                    }
+                }
+            } catch (Exception $seedCheckEx) {
+                // Ignore and proceed
+            }
+
         } catch (PDOException $e) {
             // If the database does not exist, try to connect to MySQL server and auto-create & seed
             if ($e->getCode() == 1049 || strpos($e->getMessage(), 'Unknown database') !== false) {
@@ -44,7 +67,8 @@ function get_db() {
                     $sqlFile = dirname(__DIR__) . '/database/skybook_db.sql';
                     if (file_exists($sqlFile)) {
                         $sql = file_get_contents($sqlFile);
-                        // Strip CREATE DATABASE / USE statements if needed, or run the script
+                        $sql = preg_replace('/CREATE DATABASE[^;]+;/i', '', $sql);
+                        $sql = preg_replace('/USE `?[a-zA-Z0-9_]+`?;/i', '', $sql);
                         $pdo->exec($sql);
                     }
                     return $pdo;
@@ -52,7 +76,7 @@ function get_db() {
                     die(render_db_error_page("Database Initialization Notice", "Could not connect to MySQL server or auto-create database: " . htmlspecialchars($initEx->getMessage())));
                 }
             } else {
-                die(render_db_error_page("Database Connection Error", "SkyBook could not connect to MariaDB/MySQL via XAMPP. Make sure MySQL is started in your XAMPP Control Panel.<br><br><strong>Error Details:</strong> " . htmlspecialchars($e->getMessage())));
+                die(render_db_error_page("Database Connection Error", "SkyBook could not connect to MariaDB/MySQL. Please check your DB credentials.<br><br><strong>Error Details:</strong> " . htmlspecialchars($e->getMessage())));
             }
         }
     }

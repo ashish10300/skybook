@@ -17,6 +17,8 @@ function start_session_if_none() {
 
 start_session_if_none();
 
+if (!defined('APP_URL')) define('APP_URL', getenv('APP_URL') ?: '');
+
 /**
  * Return dynamic base URL for the application regardless of directory name
  */
