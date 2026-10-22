@@ -79,20 +79,10 @@ http://localhost/skyBook_2.0/
 
 ---
 
-## 🔑 Default Credentials
+## URL
+Live Website: https://flyskybook.site.je
 
-### Administrator Portal
-- **URL**: [http://localhost/skyBook_2.0/admin/login.php](http://localhost/skyBook_2.0/admin/login.php)
-- **Email**: `admin@skybook.com`
-- **Password**: `Admin@123`
-
-### Sample Traveler Account
-- **URL**: [http://localhost/skyBook_2.0/pages/login.php](http://localhost/skyBook_2.0/pages/login.php)
-- **Email**: `john.doe@example.com`
-- **Password**: `User@123`
-*(You can also register any number of new traveler accounts at `pages/register.php`)*
-
----
+📱Responsive Design: Accessible across desktop, laptop, tablet, and mobile devices.
 
 ## 🔄 End-to-End Workflows
 
