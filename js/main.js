@@ -66,14 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ==============================================================
 // ==============================================================
-// SkyBook Intelligent Loading Experience Engine
-// (Renders first, displays for min 1.5s, holds until all images load)
+// SkyBook Real-Time Conditional Image & Network Load Experience
+// (Only shows if images/network take real time; if in time, no loader)
 // ==============================================================
 (function initSkyBookLoadExperience() {
     const preloader = document.getElementById('skybook-preloader');
     const statusMsg = document.getElementById('preloader-status-msg');
-    const startTime = window.__skybookStartTime || Date.now();
-    const MIN_LOADER_MS = 1500; // 1.5 seconds minimum display duration
     let isDismissed = false;
 
     // 1. Mark image and parent wrappers
@@ -116,14 +114,19 @@ document.addEventListener('DOMContentLoaded', () => {
         isDismissed = true;
         window.__skybookLoaded = true;
 
+        if (window.__skybookTimer) {
+            clearTimeout(window.__skybookTimer);
+        }
+
+        preloader.classList.remove('is-active');
         preloader.classList.add('preloader-hidden');
 
         setTimeout(() => {
             preloader.style.display = 'none';
-        }, 400);
+        }, 360);
     }
 
-    // 4. Verification Check: Both 1.5s minimum elapsed AND all images + document ready
+    // 4. Verification Check: Are all images and document ready?
     function checkAllReady() {
         if (isDismissed) return;
 
@@ -131,20 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const isDocDone = (document.readyState === 'complete');
 
         if (allImagesDone && isDocDone) {
-            const elapsed = Date.now() - startTime;
-            if (elapsed >= MIN_LOADER_MS) {
-                // Both conditions met: 1.5s has passed AND all images/assets are loaded
-                fadeOutPreloader();
-            } else {
-                // All loaded fast (< 1.5s): wait the remaining time to complete 1.5s
-                const remaining = MIN_LOADER_MS - elapsed;
-                setTimeout(fadeOutPreloader, remaining);
-            }
+            fadeOutPreloader();
         }
     }
 
+    // If all images loaded immediately ("loads in time"), cancel timer so loader NEVER appears
     if (pendingImages.length === 0 && document.readyState === 'complete') {
-        checkAllReady();
+        fadeOutPreloader();
     } else {
         pendingImages.forEach(img => {
             img.addEventListener('load', checkAllReady, { once: true });
@@ -152,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         window.addEventListener('load', checkAllReady, { once: true });
 
-        // Backup failsafe timer (7.5s) in case an external resource stalls indefinitely
-        setTimeout(fadeOutPreloader, 7500);
+        // Failsafe timer (6s) in case an external image stalls
+        setTimeout(fadeOutPreloader, 6000);
     }
 
     // 5. Global helper to trigger loader during navigation / form submissions
@@ -164,8 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         preloader.style.display = 'flex';
         preloader.classList.remove('preloader-hidden');
-        preloader.style.opacity = '1';
-        preloader.style.visibility = 'visible';
+        preloader.classList.add('is-active');
     };
 
     // 6. Intercept Search & Booking Form submissions to show active flight search loader

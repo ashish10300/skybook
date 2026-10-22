@@ -1999,17 +1999,24 @@ h4 { font-size: 1.1rem; }
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(7, 10, 18, 0.98);
+  background: rgba(7, 10, 18, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   z-index: 9999999;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 1;
-  visibility: visible;
-  pointer-events: all;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+}
+
+/* Activated ONLY when network or image rendering takes real time */
+.skybook-preloader.is-active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: all !important;
 }
 
 .skybook-preloader.preloader-hidden {

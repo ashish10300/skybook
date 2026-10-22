@@ -29,8 +29,8 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     <?php endif; ?>
 </head>
 <body>
-    <!-- SkyBook Minimalist Preloader (Renders First Immediately) -->
-    <div id="skybook-preloader" class="skybook-preloader" style="opacity:1; visibility:visible; display:flex;" aria-hidden="true">
+    <!-- SkyBook Minimalist Preloader -->
+    <div id="skybook-preloader" class="skybook-preloader" aria-hidden="true">
         <div class="preloader-minimal">
             <div class="minimal-flight-orbit">
                 <svg class="orbit-svg" viewBox="0 0 72 72">
@@ -53,8 +53,15 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
         </div>
     </div>
     <script>
-    // Record page load start time for minimum 1.5s display duration
+    // Real-Time Delay Detection: If loaded in time, no loader shows.
+    // If image rendering or network takes real time (>400ms), activate the loader.
     window.__skybookStartTime = Date.now();
+    window.__skybookTimer = setTimeout(function() {
+        var pl = document.getElementById('skybook-preloader');
+        if (pl && !window.__skybookLoaded) {
+            pl.classList.add('is-active');
+        }
+    }, 400);
     </script>
 
     <!-- Main Navigation Bar -->
