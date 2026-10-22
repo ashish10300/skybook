@@ -206,19 +206,3 @@ skyBook_2.0/
 
 ---
 
-## 🎓 College Viva & Presentation Guide
-
-When demonstrating SkyBook to your professor or examiner, emphasize these key design decisions:
-
-1. **Why not a separate `booking_drafts` table?**
-   - *Answer*: Creating a duplicate drafts table causes data redundancy and schema drift. By maintaining a single `bookings` table with a `status` field (`pending` vs `booked`), the schema remains normalized, foreign keys link cleanly to `passengers`, and transitioning from a draft to a confirmed booking requires an atomic `UPDATE` without copying records between tables.
-2. **How does the system ensure security without an external API?**
-   - *Answer*: All database interactions use PDO prepared statements with bound parameters to eliminate SQL injection. Passwords are encrypted with standard Bcrypt algorithms (`password_hash`), sessions enforce `HttpOnly` cookie constraints, and admin routes strictly check `role === 'admin'`.
-3. **How does draft validation work?**
-   - *Answer*: When a traveler resumes a pending booking from `pages/drafts.php`, the system queries the current flight record in `flights`. It checks that the flight is still `active`, that `available_seats >= passenger_count`, and recalibrates the base fare if the administrator updated airline pricing in the interim.
-4. **How are seat numbers and boarding passes generated?**
-   - *Answer*: Upon successful demo checkout, available flight seats are atomically decremented in MariaDB, a payment record is generated with a unique transaction reference, and the e-ticket engine renders an SVG/CSS boarding pass with realistic seat assignments (e.g., 14A, 14B) and print-optimized CSS.
-
----
-
-&copy; SkyBook Flight Systems. Second Refined Version. Built cleanly for academic and commercial-grade demonstration.
