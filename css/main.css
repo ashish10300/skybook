@@ -1989,3 +1989,200 @@ h4 { font-size: 1.1rem; }
     font-size: 1.1rem;
   }
 }
+
+/* ==============================================================
+   AVIATION IMAGE PRELOADER & SKELETON SHIMMER
+   ============================================================== */
+
+.skybook-preloader {
+  position: fixed;
+  inset: 0;
+  background: #070a12;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
+  pointer-events: all;
+}
+
+.skybook-preloader.preloader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  max-width: 360px;
+  width: 90%;
+}
+
+/* Concentric Radar Waves */
+.preloader-radar {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.radar-wave {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
+  animation: radarPulse 2.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.radar-wave.delay-1 {
+  animation-delay: 0.6s;
+}
+
+.radar-wave.delay-2 {
+  animation-delay: 1.2s;
+}
+
+@keyframes radarPulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.radar-plane-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.3), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+  animation: planeFloat 2.5s ease-in-out infinite;
+}
+
+.radar-plane {
+  width: 26px;
+  height: 26px;
+  color: #38bdf8;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes planeFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.preloader-brand {
+  margin-bottom: 0.75rem;
+}
+
+.preloader-brand .brand-text {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.preloader-status {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  min-height: 20px;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s ease;
+}
+
+/* Progress Track */
+.preloader-progress-track {
+  width: 220px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.preloader-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
+  border-radius: 999px;
+  transition: width 0.2s ease-out;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+.preloader-percentage {
+  font-size: 0.75rem;
+  color: #38bdf8;
+  font-family: monospace;
+  font-weight: 700;
+  margin-top: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* Card-Level Image Shimmer Skeleton */
+.dest-img-wrap,
+.cabin-img-wrap,
+.about-image-card {
+  background-color: #0f172a !important;
+}
+
+.dest-img-wrap::before,
+.cabin-img-wrap::before,
+.about-image-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(56, 189, 248, 0.06) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 2s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Smooth Image Reveal */
+.dest-img,
+.cabin-img-wrap img,
+.about-image-card img {
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.4s ease;
+}
+
+.dest-img.img-loaded,
+.cabin-img-wrap img.img-loaded,
+.about-image-card img.img-loaded {
+  opacity: 1;
+}
