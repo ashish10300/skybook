@@ -5,32 +5,42 @@
    ============================================================== */
 
 /* Base Layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  width: 100%;
   background-color: #080d1a;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden; /* Lock outer frame on desktop: left sidebar static, right side scrolls */
 }
 
 /* ==============================================================
-   SIDEBAR (Desktop Sticky & Mobile Slide-In Drawer)
+   SIDEBAR (Desktop Static & Mobile Slide-In Drawer)
    ============================================================== */
 
 .admin-sidebar {
   width: 260px;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(15, 23, 42, 0.88);
   backdrop-filter: var(--glass-blur, blur(16px));
   -webkit-backdrop-filter: var(--glass-blur, blur(16px));
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 0;
   height: 100vh;
+  max-height: 100vh;
+  position: relative;
+  top: 0;
+  left: 0;
   z-index: 100;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .admin-brand {
@@ -39,6 +49,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
 .admin-sidebar-close {
@@ -71,7 +82,7 @@
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-left: 4px;
+  margin-left: 8px;
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
@@ -164,7 +175,7 @@
 }
 
 /* ==============================================================
-   MAIN BODY & TOPBAR
+   MAIN BODY & TOPBAR (Right Side Scrolls Independently)
    ============================================================== */
 
 .admin-main {
@@ -172,11 +183,33 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: #080d1a;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom sleek scrollbar for right content panel */
+.admin-main::-webkit-scrollbar {
+  width: 7px;
+}
+.admin-main::-webkit-scrollbar-track {
+  background: rgba(8, 13, 26, 0.6);
+}
+.admin-main::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.25);
+  border-radius: 4px;
+}
+.admin-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.5);
 }
 
 .admin-topbar {
   height: 66px;
+  min-height: 66px;
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -188,6 +221,7 @@
   position: sticky;
   top: 0;
   z-index: 90;
+  flex-shrink: 0;
 }
 
 .admin-topbar-left {
@@ -618,9 +652,29 @@
    ============================================================== */
 
 @media (max-width: 992px) {
+  html, body {
+    height: auto;
+  }
+
+  .admin-layout {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .admin-main {
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
   /* Fix Topbar to Single-Row Compact Bar */
   .admin-topbar {
     height: 58px !important;
+    min-height: 58px !important;
     padding: 0 12px !important;
     flex-wrap: nowrap !important;
     gap: 8px !important;

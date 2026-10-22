@@ -13,7 +13,7 @@
                 <div class="footer-col footer-brand">
                     <a href="<?= base_url('index.php') ?>" class="brand-logo">
                         <img src="<?= base_url('assets/img/logo.png') ?>" alt="SkyBook Logo" style="height: 36px; width: auto; object-fit: contain;">
-                        Sky<span>Book</span>
+                        ky<span>Book</span>
                     </a>
                     <p>
                         Elevating global travel. Book seamless flights across the world's top destinations with SkyBook.

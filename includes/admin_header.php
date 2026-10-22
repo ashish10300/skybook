@@ -21,8 +21,24 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     <!-- Base Styles & Admin Theme -->
     <link rel="stylesheet" href="<?= asset_url('css/main.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/main.css') ?>">
     <link rel="stylesheet" href="<?= asset_url('css/admin.css') ?>?v=<?= filemtime(dirname(__DIR__) . '/css/admin.css') ?>">
-</head>
 <body>
+    <!-- SkyBook Simple Loading Animation -->
+    <div id="skybook-preloader" class="skybook-preloader" aria-hidden="true">
+        <div class="preloader-simple">
+            <div class="simple-spinner"></div>
+            <div class="simple-loading-text">Loading...</div>
+        </div>
+    </div>
+    <script>
+    window.__skybookStartTime = Date.now();
+    window.__skybookTimer = setTimeout(function() {
+        var pl = document.getElementById('skybook-preloader');
+        if (pl && !window.__skybookLoaded) {
+            pl.classList.add('is-active');
+        }
+    }, 1000);
+    </script>
+
 <div class="admin-layout">
     <!-- Mobile Sidebar Backdrop Overlay -->
     <div class="admin-sidebar-overlay" id="admin-sidebar-overlay"></div>
@@ -30,10 +46,10 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     <!-- Admin Sidebar (Desktop Sticky + Mobile Drawer) -->
     <aside class="admin-sidebar" id="admin-sidebar">
         <div class="admin-brand">
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:center; gap:0px;">
                 <img src="<?= base_url('assets/img/logo.png') ?>" alt="SkyBook Logo" style="height: 32px; width: auto; object-fit: contain;">
                 <div>
-                    <span style="font-family: var(--font-heading); font-weight:800; font-size:1.15rem; color:#fff;">Sky<span style="color:var(--accent);">Book</span></span>
+                    <span style="font-family: var(--font-heading); font-weight:800; font-size:1.15rem; color:#fff;">ky<span style="color:var(--accent);">Book</span></span>
                     <span class="admin-badge">Admin</span>
                 </div>
             </div>
@@ -121,7 +137,7 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
                 <div class="admin-topbar-title-wrap">
                     <span class="admin-topbar-brand-mobile">
                         <img src="<?= base_url('assets/img/logo.png') ?>" alt="Logo" style="height:22px; width:auto;">
-                        <span>Sky<span style="color:var(--accent);">Book</span></span>
+                        <span>ky<span style="color:var(--accent);">Book</span></span>
                         <span class="admin-badge">Admin</span>
                     </span>
                     <span class="admin-topbar-title">SkyBook Admin Console</span>

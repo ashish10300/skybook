@@ -65,14 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==============================================================
-// SkyBook Intelligent Conditional Preloader & Image Load System
+// ==============================================================
+// SkyBook Simple Conditional Preloader & Image Load System
+// (Only shows if >1s or images pending; stays until images load)
 // ==============================================================
 (function initSkyBookLoadExperience() {
     const preloader = document.getElementById('skybook-preloader');
-    const statusMsg = document.getElementById('preloader-status-msg');
     let isDismissed = false;
 
-    // 1. Mark image and its parent wrapper as fully loaded
+    // 1. Mark image and parent wrappers
     function markImageLoaded(img) {
         if (!img) return;
         img.classList.add('img-loaded');
@@ -92,27 +93,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Scan and manage all images on page for individual radar spinners / shimmer
-    function initCardImageLoaders() {
-        const images = Array.from(document.querySelectorAll('img')).filter(img => !preloader || !preloader.contains(img));
-        const pendingImages = [];
+    // 2. Track all images on the page
+    const images = Array.from(document.querySelectorAll('img')).filter(img => !preloader || !preloader.contains(img));
+    const pendingImages = [];
 
-        images.forEach(img => {
-            if (img.complete && img.naturalHeight > 0) {
-                markImageLoaded(img);
-            } else {
-                pendingImages.push(img);
-                img.addEventListener('load', () => markImageLoaded(img), { once: true });
-                img.addEventListener('error', () => markImageError(img), { once: true });
-            }
-        });
+    images.forEach(img => {
+        if (img.complete && img.naturalHeight > 0) {
+            markImageLoaded(img);
+        } else {
+            pendingImages.push(img);
+            img.addEventListener('load', () => markImageLoaded(img), { once: true });
+            img.addEventListener('error', () => markImageError(img), { once: true });
+        }
+    });
 
-        return pendingImages;
-    }
-
-    const pendingImages = initCardImageLoaders();
-
-    // 3. Conditional Page Preloader Dismissal / Activation
+    // 3. Dismiss preloader
     function fadeOutPreloader() {
         if (isDismissed || !preloader) return;
         isDismissed = true;
@@ -127,60 +122,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             preloader.style.display = 'none';
-        }, 360);
+        }, 320);
     }
 
-    // Condition A: If already loaded within 160ms and no pending images ("if loaded then fine")
-    const elapsed = Date.now() - (window.__skybookStartTime || Date.now());
-    if (elapsed < 160 && pendingImages.length === 0) {
-        window.__skybookLoaded = true;
-        if (window.__skybookTimer) clearTimeout(window.__skybookTimer);
-        if (preloader) {
-            preloader.style.display = 'none';
-        }
-    } else if (pendingImages.length > 0) {
-        // Condition B: Images still downloading over network -> ensure preloader activates if network is slow
-        let remaining = pendingImages.length;
-        pendingImages.forEach(img => {
-            const onDone = () => {
-                remaining--;
-                if (remaining <= 0) {
-                    fadeOutPreloader();
-                }
-            };
-            if (img.complete) {
-                onDone();
-            } else {
-                img.addEventListener('load', onDone, { once: true });
-                img.addEventListener('error', onDone, { once: true });
-            }
-        });
+    // 4. Check if all images and document are ready
+    function checkAllReady() {
+        const allImagesDone = pendingImages.every(img => img.complete);
+        const isDocDone = document.readyState === 'complete';
 
-        // Backup timer for images (max 2.2s so user is never trapped)
-        setTimeout(fadeOutPreloader, 2200);
+        if (allImagesDone && isDocDone) {
+            fadeOutPreloader();
+        }
+    }
+
+    if (pendingImages.length === 0) {
+        if (document.readyState === 'complete') {
+            fadeOutPreloader();
+        } else {
+            window.addEventListener('load', fadeOutPreloader, { once: true });
+        }
     } else {
-        // No pending images, smoothly fade out
-        setTimeout(fadeOutPreloader, 100);
+        pendingImages.forEach(img => {
+            img.addEventListener('load', checkAllReady, { once: true });
+            img.addEventListener('error', checkAllReady, { once: true });
+        });
+        window.addEventListener('load', checkAllReady, { once: true });
+
+        // Failsafe timeout so user is never stuck if an external asset stalls
+        setTimeout(fadeOutPreloader, 4000);
     }
 
-    window.addEventListener('load', () => {
-        setTimeout(fadeOutPreloader, 120);
-    }, { once: true });
-
-    // 4. Global helper to trigger loader during form submissions / flight search
-    window.showSkyBookLoader = function(message) {
+    // 5. Global helper to trigger loader
+    window.showSkyBookLoader = function() {
         if (!preloader) return;
-        if (statusMsg && message) {
-            statusMsg.textContent = message;
-        }
         preloader.style.display = 'flex';
         preloader.classList.remove('preloader-hidden');
         preloader.classList.add('is-active');
     };
 
-    // 5. Intercept Search & Booking Form submissions to show active flight search loader
+    // 6. Form submissions: show loader only if response takes > 1 second
     document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function() {
             if (form.checkValidity && !form.checkValidity()) {
                 return;
             }
@@ -190,29 +172,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.classList.add('btn-loading');
             }
 
-            const action = (form.getAttribute('action') || window.location.pathname).toLowerCase();
-            let msg = 'Searching Live Flight Schedules...';
-
-            if (action.includes('payment.php') || action.includes('confirm')) {
-                msg = 'Securing Flight Reservation...';
-            } else if (action.includes('passenger.php')) {
-                msg = 'Reserving Passenger Seats...';
-            } else if (action.includes('login.php')) {
-                msg = 'Authenticating Account...';
-            } else if (action.includes('results.php')) {
-                msg = 'Scanning International Routes & Fares...';
-            }
-
-            window.showSkyBookLoader(msg);
+            setTimeout(() => {
+                if (!window.__skybookFormCompleted) {
+                    window.showSkyBookLoader();
+                }
+            }, 1000);
         });
     });
 
-    // Handle browser back/forward cache (pageshow) to immediately clear preloader
+    // Handle browser back/forward cache
     window.addEventListener('pageshow', (event) => {
-        if (event.persisted) {
-            fadeOutPreloader();
-            document.querySelectorAll('.btn-loading').forEach(b => b.classList.remove('btn-loading'));
-        }
+        fadeOutPreloader();
+        document.querySelectorAll('.btn-loading').forEach(b => b.classList.remove('btn-loading'));
     });
 })();
 
