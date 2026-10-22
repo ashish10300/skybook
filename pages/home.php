@@ -206,7 +206,7 @@ require_once dirname(__DIR__) . '/includes/header.php';
 <!-- Airline Experience Section (Cabin) -->
 <section style="padding: 6rem 0; background: var(--bg-main);">
     <div class="container cabin-grid">
-        <div style="position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg);">
+        <div class="cabin-img-wrap" style="position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg);">
             <img src="<?= base_url('assets/img/cabin.jpg') ?>" alt="Premium Cabin Interior" style="width: 100%; height: auto; display: block; transition: transform 0.5s;" class="hover-zoom">
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 2rem;">
                 <h3 style="color: #fff; margin: 0;">Unparalleled Comfort</h3>

@@ -47,9 +47,24 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
             <div class="preloader-wordmark">
                 Sky<span>Book</span>
             </div>
+            <div class="preloader-status" id="preloader-status-msg" style="font-size: 0.78rem; color: var(--text-dim); letter-spacing: 0.05em; text-transform: uppercase;">
+                Preparing Flight Experience...
+            </div>
             <div class="minimal-pulse-line"></div>
         </div>
     </div>
+    <script>
+    // Condition-based Preloader:
+    // If the network or assets load within 160ms (fast/cached), do not show preloader.
+    // If the network is slow or assets take longer, activate the loading animation.
+    window.__skybookStartTime = Date.now();
+    window.__skybookTimer = setTimeout(function() {
+        var pl = document.getElementById('skybook-preloader');
+        if (pl && !window.__skybookLoaded) {
+            pl.classList.add('is-active');
+        }
+    }, 160);
+    </script>
 
     <!-- Main Navigation Bar -->
     <header class="site-header">

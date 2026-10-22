@@ -65,106 +65,156 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==============================================================
-// SkyBook Minimalist Preloader & Intelligent Image Cache Detector
+// SkyBook Intelligent Conditional Preloader & Image Load System
 // ==============================================================
-(function initSkyBookMinimalPreloader() {
+(function initSkyBookLoadExperience() {
     const preloader = document.getElementById('skybook-preloader');
-    if (!preloader) return;
+    const statusMsg = document.getElementById('preloader-status-msg');
+    let isDismissed = false;
 
-    // Immediately mark loaded images so they don't remain hidden by initial CSS
+    // 1. Mark image and its parent wrapper as fully loaded
     function markImageLoaded(img) {
+        if (!img) return;
         img.classList.add('img-loaded');
+        const wrap = img.closest('.dest-img-wrap, .cabin-img-wrap, .about-image-card, .img-loading-wrap');
+        if (wrap) {
+            wrap.classList.add('img-loaded');
+            wrap.classList.remove('img-has-error');
+        }
     }
 
-    // Collect all image items to monitor (both <img> tags and background-images)
-    function collectPendingMedia() {
-        const pending = [];
-        const contentImages = Array.from(document.querySelectorAll('img')).filter(img => !preloader.contains(img));
+    function markImageError(img) {
+        if (!img) return;
+        img.classList.add('img-loaded');
+        const wrap = img.closest('.dest-img-wrap, .cabin-img-wrap, .about-image-card, .img-loading-wrap');
+        if (wrap) {
+            wrap.classList.add('img-loaded', 'img-has-error');
+        }
+    }
 
-        contentImages.forEach(img => {
+    // 2. Scan and manage all images on page for individual radar spinners / shimmer
+    function initCardImageLoaders() {
+        const images = Array.from(document.querySelectorAll('img')).filter(img => !preloader || !preloader.contains(img));
+        const pendingImages = [];
+
+        images.forEach(img => {
             if (img.complete && img.naturalHeight > 0) {
                 markImageLoaded(img);
             } else {
-                pending.push({
-                    subscribe: (onDone) => {
-                        img.addEventListener('load', () => { markImageLoaded(img); onDone(); }, { once: true });
-                        img.addEventListener('error', () => { markImageLoaded(img); onDone(); }, { once: true });
-                    }
-                });
+                pendingImages.push(img);
+                img.addEventListener('load', () => markImageLoaded(img), { once: true });
+                img.addEventListener('error', () => markImageError(img), { once: true });
             }
         });
 
-        // Also check key background images
-        const bgElements = Array.from(document.querySelectorAll('[style*="background-image"], .hero-section, .cta-banner'));
-        bgElements.forEach(el => {
-            const style = window.getComputedStyle(el);
-            const bg = style.backgroundImage;
-            if (bg && bg !== 'none') {
-                const match = bg.match(/url\(['"]?([^'"]+)['"]?\)/);
-                if (match && match[1] && !match[1].startsWith('data:')) {
-                    const testImg = new Image();
-                    testImg.src = match[1];
-                    if (!(testImg.complete && testImg.naturalHeight > 0)) {
-                        pending.push({
-                            subscribe: (onDone) => {
-                                testImg.onload = onDone;
-                                testImg.onerror = onDone;
-                            }
-                        });
-                    }
-                }
-            }
-        });
-
-        return pending;
+        return pendingImages;
     }
 
-    const pendingItems = collectPendingMedia();
+    const pendingImages = initCardImageLoaders();
 
-    // 1. IF ALREADY LOADED / CACHED -> DO NOT SHOW ANIMATION AT ALL
-    if (pendingItems.length === 0) {
-        preloader.style.display = 'none';
-        if (preloader.parentNode) {
-            preloader.parentNode.removeChild(preloader);
-        }
-        return;
-    }
-
-    // 2. IF NOT LOADED -> SHOW MINIMALIST ANIMATION UNTIL IMAGES COMPLETE
-    preloader.classList.add('is-active');
-
-    let remaining = pendingItems.length;
-    let isDismissed = false;
-
+    // 3. Conditional Page Preloader Dismissal / Activation
     function fadeOutPreloader() {
-        if (isDismissed) return;
+        if (isDismissed || !preloader) return;
         isDismissed = true;
+        window.__skybookLoaded = true;
+
+        if (window.__skybookTimer) {
+            clearTimeout(window.__skybookTimer);
+        }
 
         preloader.classList.remove('is-active');
         preloader.classList.add('preloader-hidden');
+
         setTimeout(() => {
-            if (preloader.parentNode) {
-                preloader.parentNode.removeChild(preloader);
-            }
-        }, 400);
+            preloader.style.display = 'none';
+        }, 360);
     }
 
-    pendingItems.forEach(item => {
-        item.subscribe(() => {
-            remaining--;
-            if (remaining <= 0) {
-                fadeOutPreloader();
+    // Condition A: If already loaded within 160ms and no pending images ("if loaded then fine")
+    const elapsed = Date.now() - (window.__skybookStartTime || Date.now());
+    if (elapsed < 160 && pendingImages.length === 0) {
+        window.__skybookLoaded = true;
+        if (window.__skybookTimer) clearTimeout(window.__skybookTimer);
+        if (preloader) {
+            preloader.style.display = 'none';
+        }
+    } else if (pendingImages.length > 0) {
+        // Condition B: Images still downloading over network -> ensure preloader activates if network is slow
+        let remaining = pendingImages.length;
+        pendingImages.forEach(img => {
+            const onDone = () => {
+                remaining--;
+                if (remaining <= 0) {
+                    fadeOutPreloader();
+                }
+            };
+            if (img.complete) {
+                onDone();
+            } else {
+                img.addEventListener('load', onDone, { once: true });
+                img.addEventListener('error', onDone, { once: true });
             }
+        });
+
+        // Backup timer for images (max 2.2s so user is never trapped)
+        setTimeout(fadeOutPreloader, 2200);
+    } else {
+        // No pending images, smoothly fade out
+        setTimeout(fadeOutPreloader, 100);
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(fadeOutPreloader, 120);
+    }, { once: true });
+
+    // 4. Global helper to trigger loader during form submissions / flight search
+    window.showSkyBookLoader = function(message) {
+        if (!preloader) return;
+        if (statusMsg && message) {
+            statusMsg.textContent = message;
+        }
+        preloader.style.display = 'flex';
+        preloader.classList.remove('preloader-hidden');
+        preloader.classList.add('is-active');
+    };
+
+    // 5. Intercept Search & Booking Form submissions to show active flight search loader
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (form.checkValidity && !form.checkValidity()) {
+                return;
+            }
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.classList.add('btn-loading');
+            }
+
+            const action = (form.getAttribute('action') || window.location.pathname).toLowerCase();
+            let msg = 'Searching Live Flight Schedules...';
+
+            if (action.includes('payment.php') || action.includes('confirm')) {
+                msg = 'Securing Flight Reservation...';
+            } else if (action.includes('passenger.php')) {
+                msg = 'Reserving Passenger Seats...';
+            } else if (action.includes('login.php')) {
+                msg = 'Authenticating Account...';
+            } else if (action.includes('results.php')) {
+                msg = 'Scanning International Routes & Fares...';
+            }
+
+            window.showSkyBookLoader(msg);
         });
     });
 
-    // Window load backup event
-    window.addEventListener('load', () => {
-        setTimeout(fadeOutPreloader, 100);
-    }, { once: true });
-
-    // Safety fallback: Never trap users if CDN/network hangs
-    setTimeout(fadeOutPreloader, 2200);
+    // Handle browser back/forward cache (pageshow) to immediately clear preloader
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            fadeOutPreloader();
+            document.querySelectorAll('.btn-loading').forEach(b => b.classList.remove('btn-loading'));
+        }
+    });
 })();
+
 
 

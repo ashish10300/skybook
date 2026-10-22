@@ -2139,27 +2139,34 @@ h4 { font-size: 1.1rem; }
   }
 }
 
-/* Card-Level Image Shimmer Skeleton */
+/* ==============================================================
+   Image Loading States, Skeleton Shimmer & Radar Spinner
+   ============================================================== */
 .dest-img-wrap,
 .cabin-img-wrap,
-.about-image-card {
-  background-color: #0f172a !important;
+.about-image-card,
+.img-loading-wrap {
+  position: relative !important;
+  overflow: hidden !important;
+  background-color: #0b1220 !important;
 }
 
-.dest-img-wrap::before,
-.cabin-img-wrap::before,
-.about-image-card::before {
+/* Skeleton Shimmer while image has not loaded */
+.dest-img-wrap:not(.img-loaded)::before,
+.cabin-img-wrap:not(.img-loaded)::before,
+.about-image-card:not(.img-loaded)::before,
+.img-loading-wrap:not(.img-loaded)::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(56, 189, 248, 0.06) 50%,
+    rgba(56, 189, 248, 0.09) 50%,
     rgba(255, 255, 255, 0) 100%
   );
   background-size: 200% 100%;
-  animation: skeletonShimmer 2s infinite;
+  animation: skeletonShimmer 1.8s infinite;
   pointer-events: none;
   z-index: 1;
 }
@@ -2169,18 +2176,100 @@ h4 { font-size: 1.1rem; }
   100% { background-position: 200% 0; }
 }
 
-/* Smooth Image Reveal */
+/* Glowing Cyan Flight Radar Spinner while image is loading */
+.dest-img-wrap:not(.img-loaded)::after,
+.cabin-img-wrap:not(.img-loaded)::after,
+.about-image-card:not(.img-loaded)::after,
+.img-loading-wrap:not(.img-loaded)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  margin-left: -16px;
+  border: 2.5px solid rgba(56, 189, 248, 0.2);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: imgRadarSpin 0.85s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes imgRadarSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Image reveal smoothly when fully loaded */
 .dest-img,
 .cabin-img-wrap img,
-.about-image-card img {
+.about-image-card img,
+.img-loading-wrap img {
   opacity: 0;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
 .dest-img.img-loaded,
 .cabin-img-wrap img.img-loaded,
-.about-image-card img.img-loaded {
+.about-image-card img.img-loaded,
+.img-loading-wrap img.img-loaded {
   opacity: 1 !important;
+}
+
+/* Graceful fallback if image connection errors or times out */
+.dest-img-wrap.img-has-error,
+.cabin-img-wrap.img-has-error,
+.about-image-card.img-has-error {
+  background: linear-gradient(135deg, #0f172a, #1e293b) !important;
+}
+
+.dest-img-wrap.img-has-error::after,
+.cabin-img-wrap.img-has-error::after,
+.about-image-card.img-has-error::after {
+  content: '✈️';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  font-size: 1.8rem;
+  opacity: 0.4;
+  animation: none;
+}
+
+/* Button Loading Spinner */
+.btn-loading {
+  position: relative !important;
+  color: transparent !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  margin-left: -9px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: btnSpin 0.75s linear infinite;
+}
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
 }
 
 /* ==============================================================
