@@ -1,0 +1,12 @@
+# ==============================================================
+# SkyBook - Force HTTPS Redirection & Clean URLs
+# ==============================================================
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Redirect all HTTP traffic to HTTPS securely
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>

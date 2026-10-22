@@ -4,11 +4,31 @@
  * Compatible with XAMPP MySQL / MariaDB and phpMyAdmin
  */
 
-if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-if (!defined('DB_PORT')) define('DB_PORT', getenv('DB_PORT') ?: '3306');
-if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'skybook_db');
-if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'root');
-if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+// Auto-detect InfinityFree hosting for flyskybook.site.je
+if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'flyskybook.site.je') !== false) {
+    if (!defined('DB_HOST')) define('DB_HOST', 'sql305.infinityfree.com');
+    if (!defined('DB_PORT')) define('DB_PORT', '3306');
+    if (!defined('DB_USER')) define('DB_USER', 'if0_43243624');
+    if (!defined('DB_NAME')) define('DB_NAME', 'if0_43243624_skybook_db');
+    if (!defined('DB_PASS')) define('DB_PASS', 'PUT_INFINITYFREE_PASSWORD_HERE');
+} else {
+    // Support standard DB_* as well as Railway's native MYSQL* environment variables
+    $mysqlUrl = getenv('MYSQL_URL');
+    if ($mysqlUrl) {
+        $parsed = parse_url($mysqlUrl);
+        if (!defined('DB_HOST')) define('DB_HOST', $parsed['host'] ?? 'localhost');
+        if (!defined('DB_PORT')) define('DB_PORT', (string)($parsed['port'] ?? '3306'));
+        if (!defined('DB_USER')) define('DB_USER', $parsed['user'] ?? 'root');
+        if (!defined('DB_PASS')) define('DB_PASS', $parsed['pass'] ?? '');
+        if (!defined('DB_NAME')) define('DB_NAME', ltrim($parsed['path'] ?? 'skybook_db', '/'));
+    } else {
+        if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: 'localhost');
+        if (!defined('DB_PORT')) define('DB_PORT', getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: '3306');
+        if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: 'skybook_db');
+        if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: getenv('MYSQLUSER') ?: 'root');
+        if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : ''));
+    }
+}
 if (!defined('DB_SSL'))  define('DB_SSL',  getenv('DB_SSL') === 'true' || getenv('DB_SSL') === '1');
 
 /**

@@ -3,9 +3,6 @@
 -- Target Engine: MySQL / MariaDB (XAMPP / phpMyAdmin compatible)
 -- ==============================================================
 
-CREATE DATABASE IF NOT EXISTS `skybook_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `skybook_db`;
-
 -- Drop existing tables in reverse dependency order
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `payments`;
