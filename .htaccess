@@ -5,8 +5,9 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Redirect all HTTP traffic to HTTPS securely
-RewriteCond %{HTTPS} off
+# Redirect all HTTP traffic to HTTPS securely on InfinityFree & Cloud Proxies
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:CF-Visitor} !{"scheme":"https"}
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
