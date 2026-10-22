@@ -27,10 +27,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sidebarClose) sidebarClose.addEventListener('click', closeMobileSidebar);
     if (overlay) overlay.addEventListener('click', closeMobileSidebar);
 
-    // Close mobile drawer on Escape key
+    const adminMain = document.querySelector('.admin-main');
+
+    function openModal(modal) {
+        if (!modal) return;
+        modal.classList.add('open');
+        if (adminMain) adminMain.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+
+        // Auto-focus first input in modal body
+        const firstInput = modal.querySelector('.modal-body input:not([type="hidden"]), .modal-body select');
+        if (firstInput) {
+            setTimeout(() => firstInput.focus(), 60);
+        }
+    }
+
+    function closeModal(modal) {
+        if (!modal) return;
+        modal.classList.remove('open');
+        const anyOpen = document.querySelector('.modal-backdrop.open');
+        if (!anyOpen) {
+            if (adminMain) adminMain.style.overflow = '';
+            document.body.style.overflow = '';
+        }
+    }
+
+    function closeAllModals() {
+        modalBackdrops.forEach(mb => mb.classList.remove('open'));
+        if (adminMain) adminMain.style.overflow = '';
+        document.body.style.overflow = '';
+    }
+
+    // Close mobile drawer and modals on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeMobileSidebar();
+            closeAllModals();
         }
     });
 
@@ -41,16 +73,28 @@ document.addEventListener('DOMContentLoaded', () => {
     modalCloses.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            modalBackdrops.forEach(mb => mb.classList.remove('open'));
+            const modal = btn.closest('.modal-backdrop');
+            if (modal) {
+                closeModal(modal);
+            } else {
+                closeAllModals();
+            }
         });
     });
 
     modalBackdrops.forEach(mb => {
         mb.addEventListener('click', (e) => {
             if (e.target === mb) {
-                mb.classList.remove('open');
+                closeModal(mb);
             }
         });
+
+        // Prevent wheel scrolling directly on backdrop from reaching background
+        mb.addEventListener('wheel', (e) => {
+            if (e.target === mb) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     });
 
     // 2. Open Add Flight Modal
@@ -58,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addFlightModal = document.getElementById('add-flight-modal');
     if (addFlightBtn && addFlightModal) {
         addFlightBtn.addEventListener('click', () => {
-            addFlightModal.classList.add('open');
+            openModal(addFlightModal);
         });
     }
 
@@ -88,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('edit-available-seats').value = flight.available_seats || '';
                 document.getElementById('edit-status').value = flight.status || 'active';
 
-                editFlightModal.classList.add('open');
+                openModal(editFlightModal);
             });
         });
     }

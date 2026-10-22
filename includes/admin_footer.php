@@ -32,7 +32,7 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
     </button>
 </nav>
 
-<script src="<?= asset_url('js/main.js') ?>"></script>
-<script src="<?= asset_url('js/admin.js') ?>"></script>
+<script src="<?= asset_url('js/main.js') ?>?v=<?= filemtime(dirname(__DIR__) . '/js/main.js') ?>"></script>
+<script src="<?= asset_url('js/admin.js') ?>?v=<?= filemtime(dirname(__DIR__) . '/js/admin.js') ?>"></script>
 </body>
 </html>
