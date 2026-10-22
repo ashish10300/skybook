@@ -17,6 +17,11 @@ function start_session_if_none() {
 
 start_session_if_none();
 
+// Enable output buffering globally to prevent 'headers already sent' issues
+if (!ob_get_level()) {
+    ob_start();
+}
+
 if (!defined('APP_URL')) define('APP_URL', getenv('APP_URL') ?: '');
 
 /**

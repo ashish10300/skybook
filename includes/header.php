@@ -58,7 +58,7 @@ $currentScript = basename($_SERVER['SCRIPT_NAME'] ?? '');
                 <!-- SkyBook Brand Logo -->
                 <a href="<?= base_url('index.php') ?>" class="brand-logo" id="nav-brand-logo">
                     <img src="<?= base_url('assets/img/logo.png') ?>" alt="SkyBook Logo" style="height: 36px; width: auto; object-fit: contain;">
-                    ky<span>Book</span>
+                    Sky<span>Book</span>
                 </a>
 
                 <!-- Desktop Navigation Links -->

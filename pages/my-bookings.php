@@ -4,10 +4,12 @@
  * Displays strictly completed reservations with status = 'booked'
  */
 $pageTitle = 'My Confirmed Bookings';
-require_once dirname(__DIR__) . '/includes/header.php';
+require_once dirname(__DIR__) . '/includes/functions.php';
 
 // Must be logged in
 require_login();
+
+require_once dirname(__DIR__) . '/includes/header.php';
 
 $db = get_db();
 $currentUser = current_user();

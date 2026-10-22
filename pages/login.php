@@ -3,7 +3,7 @@
  * SkyBook - User Authentication: Login
  */
 $pageTitle = 'Sign In to SkyBook';
-require_once dirname(__DIR__) . '/includes/header.php';
+require_once dirname(__DIR__) . '/includes/functions.php';
 
 // Redirect if already logged in
 if (is_logged_in()) {
@@ -76,6 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+require_once dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem;">

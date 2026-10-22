@@ -3,7 +3,7 @@
  * SkyBook - Traveler Profile Management
  */
 $pageTitle = 'Traveler Profile';
-require_once dirname(__DIR__) . '/includes/header.php';
+require_once dirname(__DIR__) . '/includes/functions.php';
 
 // Must be logged in
 require_login();
@@ -67,6 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+require_once dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <div class="container" style="padding-top: 3.5rem; padding-bottom: 5rem;">
